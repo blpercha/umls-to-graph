@@ -1,0 +1,49 @@
+subgraph	AIR	/Users/beth/Desktop/graph-info/umls-subgraph-AIR.txt
+subgraph	AOD	/Users/beth/Desktop/graph-info/umls-subgraph-AOD.txt
+subgraph	AOT	/Users/beth/Desktop/graph-info/umls-subgraph-AOT.txt
+subgraph	ATC	/Users/beth/Desktop/graph-info/umls-subgraph-ATC.txt
+subgraph	CCS	/Users/beth/Desktop/graph-info/umls-subgraph-CCS.txt
+subgraph	CCS_10	/Users/beth/Desktop/graph-info/umls-subgraph-CCS_10.txt
+subgraph	CPT	/Users/beth/Desktop/graph-info/umls-subgraph-CPT.txt
+subgraph	CSP	/Users/beth/Desktop/graph-info/umls-subgraph-CSP.txt
+subgraph	CST	/Users/beth/Desktop/graph-info/umls-subgraph-CST.txt
+subgraph	FMA	/Users/beth/Desktop/graph-info/umls-subgraph-FMA.txt
+subgraph	GO	/Users/beth/Desktop/graph-info/umls-subgraph-GO.txt
+subgraph	HPO	/Users/beth/Desktop/graph-info/umls-subgraph-HPO.txt
+subgraph	ICD10	/Users/beth/Desktop/graph-info/umls-subgraph-ICD10.txt
+subgraph	ICD10CM	/Users/beth/Desktop/graph-info/umls-subgraph-ICD10CM.txt
+subgraph	ICD10PCS	/Users/beth/Desktop/graph-info/umls-subgraph-ICD10PCS.txt
+subgraph	ICD9CM	/Users/beth/Desktop/graph-info/umls-subgraph-ICD9CM.txt
+subgraph	ICPC	/Users/beth/Desktop/graph-info/umls-subgraph-ICPC.txt
+subgraph	LNC	/Users/beth/Desktop/graph-info/umls-subgraph-LNC.txt
+subgraph	MEDLINEPLUS	/Users/beth/Desktop/graph-info/umls-subgraph-MEDLINEPLUS.txt
+subgraph	MSH	/Users/beth/Desktop/graph-info/umls-subgraph-MSH.txt
+subgraph	MTHHH	/Users/beth/Desktop/graph-info/umls-subgraph-MTHHH.txt
+subgraph	NCBI	/Users/beth/Desktop/graph-info/umls-subgraph-NCBI.txt
+subgraph	NCI	/Users/beth/Desktop/graph-info/umls-subgraph-NCI.txt
+subgraph	NDFRT	/Users/beth/Desktop/graph-info/umls-subgraph-NDFRT.txt
+subgraph	OMIM	/Users/beth/Desktop/graph-info/umls-subgraph-OMIM.txt
+subgraph	PDQ	/Users/beth/Desktop/graph-info/umls-subgraph-PDQ.txt
+subgraph	SNOMEDCT_US	/Users/beth/Desktop/graph-info/umls-subgraph-SNOMEDCT_US.txt
+subgraph	SOP	/Users/beth/Desktop/graph-info/umls-subgraph-SOP.txt
+subgraph	TKMT	/Users/beth/Desktop/graph-info/umls-subgraph-TKMT.txt
+subgraph	USPMG	/Users/beth/Desktop/graph-info/umls-subgraph-USPMG.txt
+subgraph	UWDA	/Users/beth/Desktop/graph-info/umls-subgraph-UWDA.txt
+subgraph	RXNORM	/Users/beth/Desktop/graph-info/umls-subgraph-drug-ingredient.txt
+codedecorator	MDR	/Users/beth/Desktop/graph-info/umls-code-decorator-MDR.txt
+codedecorator	ICD9CM	/Users/beth/Desktop/graph-info/umls-code-decorator-ICD9CM.txt
+codedecorator	MTHICD9	/Users/beth/Desktop/graph-info/umls-code-decorator-MTHICD9.txt
+codedecorator	ICD10	/Users/beth/Desktop/graph-info/umls-code-decorator-ICD10.txt
+codedecorator	ICD10CM	/Users/beth/Desktop/graph-info/umls-code-decorator-ICD10CM.txt
+codedecorator	ICD10PCS	/Users/beth/Desktop/graph-info/umls-code-decorator-ICD10PCS.txt
+codedecorator	LNC	/Users/beth/Desktop/graph-info/umls-code-decorator-LNC.txt
+codedecorator	SNOMEDCT_US	/Users/beth/Desktop/graph-info/umls-code-decorator-SNOMEDCT_US.txt
+codedecorator	NDC	/Users/beth/Desktop/graph-info/umls-code-decorator-NDC.txt
+translation	ICD9CM	ICD10PCS	/Users/beth/Desktop/graph-info/umls-translation-decorator-icd9-icd10.txt
+translation	ICD9CM	SNOMEDCT_US	/Users/beth/Desktop/graph-info/umls-translation-decorator-icd9-icd10.txt
+decorator	ONTOLOGY	/Users/beth/Desktop/graph-info/umls-decorator-ontology.txt
+decorator	SEMGROUP	/Users/beth/Desktop/graph-info/umls-decorator-semantic-group.txt
+decorator	SEMTYPE	/Users/beth/Desktop/graph-info/umls-decorator-semantic-type.txt
+decorator	STRINGS	/Users/beth/Desktop/graph-info/umls-decorator-strings.txt.gz
+edgefilter	SEMGROUPMISMATCH
+nodemodifier	MODIFIEDSTRINGS

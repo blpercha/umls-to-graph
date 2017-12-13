@@ -17,21 +17,76 @@ Once you've downloaded it, follow the instructions in the README to install it. 
 
 A couple of notes:
 - On the "Select Default Subset Configuration" screen, I always choose "Select all non-level 0 sources except SNOMED_CT US". SNOMED contains a ton of useful terms and hierarchies.
+- By default, MedDRA and CPT are not selected. I would include those, as well as any other English-language terminologies you think will be useful.
 - Once the resource files are installed, there will be many more than you need for the graph. You can delete pretty much everything except: MRCONSO.RRF (concept names and sources), MRHIER.RRF (hierarchies), MRREL.RRF (related concepts), MRSAT.RRF (simple concept and atom attributes) and MRSTY.RRF (semantic types). You can find complete descriptions of all of the UMLS files [here](https://www.ncbi.nlm.nih.gov/books/NBK9685/#_ch03_sec3_3_).
 
-## The Graph Structure
+## Creating the Graph
 
-Graphs have nodes and edges. The UMLS graph will have nodes that correspond to CUIs in UMLS and edges that correspond to hierarchical relationships from the various ontologies within UMLS.
+The `umls-to-graph` code uses Maven to handle dependencies (see the `pom.xml` file for details). Run the code from Eclipse or IntelliJ, or compile a jar using Maven.
 
-The graph lives in two files: a "structure" file and a "decorations" file. The structure file contains the edges and the decorations file contains the nodes, along with a bunch of metadata about them.
+You construct the graph by creating a configuration file (mine is called `graph-config.txt` and can be found in the `resources` section of this repository) that looks something like this:
 
-The specifics of both files are up to you.  
+``` 
+subgraph	AIR	/Users/beth/Desktop/graph-info/umls-subgraph-AIR.txt
+subgraph	AOD	/Users/beth/Desktop/graph-info/umls-subgraph-AOD.txt
+subgraph	AOT	/Users/beth/Desktop/graph-info/umls-subgraph-AOT.txt
+subgraph	ATC	/Users/beth/Desktop/graph-info/umls-subgraph-ATC.txt
+subgraph	CCS	/Users/beth/Desktop/graph-info/umls-subgraph-CCS.txt
+subgraph	CCS_10	/Users/beth/Desktop/graph-info/umls-subgraph-CCS_10.txt
+subgraph	CPT	/Users/beth/Desktop/graph-info/umls-subgraph-CPT.txt
+subgraph	CSP	/Users/beth/Desktop/graph-info/umls-subgraph-CSP.txt
+subgraph	CST	/Users/beth/Desktop/graph-info/umls-subgraph-CST.txt
+subgraph	FMA	/Users/beth/Desktop/graph-info/umls-subgraph-FMA.txt
+subgraph	GO	/Users/beth/Desktop/graph-info/umls-subgraph-GO.txt
+subgraph	HPO	/Users/beth/Desktop/graph-info/umls-subgraph-HPO.txt
+subgraph	ICD10	/Users/beth/Desktop/graph-info/umls-subgraph-ICD10.txt
+subgraph	ICD10CM	/Users/beth/Desktop/graph-info/umls-subgraph-ICD10CM.txt
+subgraph	ICD10PCS	/Users/beth/Desktop/graph-info/umls-subgraph-ICD10PCS.txt
+subgraph	ICD9CM	/Users/beth/Desktop/graph-info/umls-subgraph-ICD9CM.txt
+subgraph	ICPC	/Users/beth/Desktop/graph-info/umls-subgraph-ICPC.txt
+subgraph	LNC	/Users/beth/Desktop/graph-info/umls-subgraph-LNC.txt
+subgraph	MEDLINEPLUS	/Users/beth/Desktop/graph-info/umls-subgraph-MEDLINEPLUS.txt
+subgraph	MSH	/Users/beth/Desktop/graph-info/umls-subgraph-MSH.txt
+subgraph	MTHHH	/Users/beth/Desktop/graph-info/umls-subgraph-MTHHH.txt
+subgraph	NCBI	/Users/beth/Desktop/graph-info/umls-subgraph-NCBI.txt
+subgraph	NCI	/Users/beth/Desktop/graph-info/umls-subgraph-NCI.txt
+subgraph	NDFRT	/Users/beth/Desktop/graph-info/umls-subgraph-NDFRT.txt
+subgraph	OMIM	/Users/beth/Desktop/graph-info/umls-subgraph-OMIM.txt
+subgraph	PDQ	/Users/beth/Desktop/graph-info/umls-subgraph-PDQ.txt
+subgraph	SNOMEDCT_US	/Users/beth/Desktop/graph-info/umls-subgraph-SNOMEDCT_US.txt
+subgraph	SOP	/Users/beth/Desktop/graph-info/umls-subgraph-SOP.txt
+subgraph	TKMT	/Users/beth/Desktop/graph-info/umls-subgraph-TKMT.txt
+subgraph	USPMG	/Users/beth/Desktop/graph-info/umls-subgraph-USPMG.txt
+subgraph	UWDA	/Users/beth/Desktop/graph-info/umls-subgraph-UWDA.txt
+subgraph	RXNORM	/Users/beth/Desktop/graph-info/umls-subgraph-drug-ingredient.txt
+codedecorator	MDR	/Users/beth/Desktop/graph-info/umls-code-decorator-MDR.txt
+codedecorator	ICD9CM	/Users/beth/Desktop/graph-info/umls-code-decorator-ICD9CM.txt
+codedecorator	MTHICD9	/Users/beth/Desktop/graph-info/umls-code-decorator-MTHICD9.txt
+codedecorator	ICD10	/Users/beth/Desktop/graph-info/umls-code-decorator-ICD10.txt
+codedecorator	ICD10CM	/Users/beth/Desktop/graph-info/umls-code-decorator-ICD10CM.txt
+codedecorator	ICD10PCS	/Users/beth/Desktop/graph-info/umls-code-decorator-ICD10PCS.txt
+codedecorator	LNC	/Users/beth/Desktop/graph-info/umls-code-decorator-LNC.txt
+codedecorator	SNOMEDCT_US	/Users/beth/Desktop/graph-info/umls-code-decorator-SNOMEDCT_US.txt
+codedecorator	NDC	/Users/beth/Desktop/graph-info/umls-code-decorator-NDC.txt
+translation	ICD9CM	ICD10PCS	/Users/beth/Desktop/graph-info/umls-translation-decorator-icd9-icd10.txt
+translation	ICD9CM	SNOMEDCT_US	/Users/beth/Desktop/graph-info/umls-translation-decorator-icd9-icd10.txt
+decorator	ONTOLOGY	/Users/beth/Desktop/graph-info/umls-decorator-ontology.txt
+decorator	SEMGROUP	/Users/beth/Desktop/graph-info/umls-decorator-semantic-group.txt
+decorator	SEMTYPE	/Users/beth/Desktop/graph-info/umls-decorator-semantic-type.txt
+decorator	STRINGS	/Users/beth/Desktop/graph-info/umls-decorator-strings.txt.gz
+edgefilter	SEMGROUPMISMATCH
+nodemodifier	MODIFIEDSTRINGS
+```
 
-## Subgraphs (Edges)
+All of those resource files are generated by the `create-resource-files.sh` script, also in the `resources` directory, which you should feel free to modify and use.
 
-The edges of the UMLS graph come from the hierarchical relationships within UMLS. The relationships from each ontology constitute a *subgraph*. Multiple subgraphs are combined to create the complete graph. You can choose to include relationships from as many ontologies as you want.
+You can leave out any subgraphs or decorators you want, or add additional subgraphs for other ontologies (details below).
 
-The ontologies that have hierarchical relationships represented in MRHIER.RRF are (as of the 2017 release):
+You build the graph by running `java build.CreateUMLSGraph <graph-config-file> <output-structure-file> <output-decorations-file>`. 
+
+## List of Supported Ontologies
+
+The following ontologies are currently supported and provide hierarchical relationships from MRHIER.RRF:
 
 * [AIR](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/AIR/) (1512 hierarchical relationships in MRHIER.RRF)
 * [AOD](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/AOD/) (14284)
@@ -39,6 +94,7 @@ The ontologies that have hierarchical relationships represented in MRHIER.RRF ar
 * [ATC](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/ATC) (6083)
 * [CCS](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/CCS) (1099)
 * [CCS_10](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/CCS_10) (372)
+* [CPT](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/CPT) 
 * [CSP](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/CSP)  (14582)
 * [CST](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/CST)
 (3331)
@@ -46,13 +102,14 @@ The ontologies that have hierarchical relationships represented in MRHIER.RRF ar
 (104084)
 * [GO](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/GO)
 (809207)
-* [HL7V2.5](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/HL7V25) (5034)
-* [HL7V3.0](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/HL7V30) (10622)
 * [HPO](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/HPO/) (81558)
+* [ICD10](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/ICD10/) (12319)
+* [ICD10CM](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/ICD10CM/) (94516)
 * [ICD10PCS](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/ICD10PCS/) (190176)
 * [ICD9CM](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/ICD9CM) (22407)
 * [ICPC](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/ICPC) (1433)
 * [LNC](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/LNC/) (270837)
+* [MDR](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/MDR/)
 * [MEDLINEPLUS](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/MEDLINEPLUS/) (1812)
 * [MSH](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/MSH/) (58859)
 * [MTHHH](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/MTHHH/) (6937)
@@ -67,7 +124,41 @@ The ontologies that have hierarchical relationships represented in MRHIER.RRF ar
 * [USPMG](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/USPMG) (1910)
 * [UWDA](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/UWDA) (419453)
 
-The ontologies I typically use in my graph are: ATC, FMA, GO, HPO, ICD10PCS, ICD9CM, LNC, MSH, MTHHH, NCBI, NCI, NDFRT, OMIM, and SNOMEDCT_US.
+Two more ontologies from MRCONSO.RRF don't provide hierarchical relationships but do provide codes:
+
+* [MTHICD9](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/MTHICD9)
+* [CHV](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/CHV)
+    
+And finally, [NDC](https://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/NDC) is only in MRSAT.RRF.
+
+## The Graph Structure
+
+Graphs have nodes and edges. The UMLS graph will have nodes that correspond to CUIs in UMLS and edges that correspond to hierarchical relationships from the various ontologies within UMLS.
+
+The graph lives in two files: a "structure" file and a "decorations" file. The structure file contains the edges and the decorations file contains the nodes, along with a bunch of metadata about them.
+
+## Format of the Graph Files
+
+Both of the graph output files are tab-delimited.
+
+The structure file has two columns:
+
+* parent CUI
+* child CUI
+
+The decorations file has the following columns:
+
+* CUI
+* sibling CUIs (see explanation below; comma-delimited)
+* string descriptions (pipe-delimited)
+* codes (pipe-delimited, with sources)
+* semantic type(s) (pipe-delimited)
+* semantic group(s) (pipe-delimited)
+* ontologies (pipe-delimited)
+
+## Creating Resource Files: Subgraphs
+
+The edges of the UMLS graph come from the hierarchical relationships within UMLS. The relationships from each ontology constitute a *subgraph*. Multiple subgraphs are combined to create the complete graph. You can choose to include relationships from as many ontologies as you want.
 
 You need to build a resource file for each subgraph before the final graph can be created. This is really useful for debugging later, since you can see where all of the edges in the final graph come from.
 
@@ -81,9 +172,9 @@ For example:
 
 `java subgraphs.MrHierSubgraph /Users/beth/Documents/data/2017AB-full/2017AB/META/MRHIER.RRF /Users/beth/Documents/data/2017AB-full/2017AB/META/MRCONSO.RRF /Users/beth/Desktop/subgraphs/umls-subgraph-omim.txt OMIM`
 
-Ensure that the string you use to reference the ontology (argument 4, above) matches one of the recognized ontology types listed above. Otherwise no output will be produced.
+Ensure that the string you use to reference the ontology (argument 4, above) matches one of the recognized ontology types listed above.
 
-The output format is a two-column tab-delimited file; the first column is a parent CUI and the second column is a comma-separated list of child CUIs. Note that instead of being stored as strings (`"C4228946"`) the CUIs are stored as integers to save space. So the CUI listed as `543` in the subgraph files corresponds to the CUI listed as `C0000543` in the UMLS files.
+The output resource file format is a two-column tab-delimited file; the first column is a parent CUI and the second column is a comma-separated list of child CUIs. Note that instead of being stored as strings (`"C4228946"`) the CUIs are stored as integers to save space. So the CUI listed as `543` in the subgraph files corresponds to the CUI listed as `C0000543` in the UMLS files.
 
 ### Drug-Ingredient Subgraph
 
@@ -97,7 +188,7 @@ For example:
 
 ` /Users/beth/Documents/data/2017AB-full/2017AB/META/MRREL.RRF /Users/beth/Documents/data/2017AB-full/2017AB/META/MRCONSO.RRF /Users/beth/Desktop/subgraphs/umls-subgraph-drug-ingredient.txt `
 
-## Decorators (Nodes)
+## Creating Resource Files: Decorators
 
 The nodes of the subgraphs are all CUIs. CUIs are not very useful on their own for most applications. Normally we'll want to start with a string descriptor of a concept ("diabetes") or a billing code (such as from NDC or ICD9), map it to a CUI, and use the graph to find parent or child CUIs (and their associated strings and codes). To decorate the nodes of the subgraphs with all of this other information, we use an object called a *decorator*. 
 
@@ -105,7 +196,9 @@ The metadata that decorators use to decorate the nodes also lives in resource fi
 
 ### String Annotation Decorators
 
-For most NLP applications, string annotations for UMLS concepts will be the most important thing that comes out of this graph. Each CUI is attached to a set of descriptors from various ontologies. The SPECIALIST lexicon (which comes with UMLS) also provides a list of alternate spellings for various terms in the LRSPL file. The string annotation decorator finds all strings from recognized ontologies (everything represented in the OntologyType enum) and the alternate spellings from LRSPL, and attaches them to nodes in the graph. To generate a resource file for this code decorator, run the following:
+For most NLP applications, string annotations for UMLS concepts will be the most important thing that comes out of this graph. Each CUI is attached to a set of descriptors from various ontologies. The SPECIALIST lexicon (which comes with UMLS) also provides a list of alternate spellings for various terms in the LRSPL file. 
+
+The string annotation decorator finds all English-language, all-ASCII strings from MRCONSO.RRF and the alternate spellings from LRSPL, and attaches them to nodes in the graph. To generate a resource file for this code decorator, run the following:
 
 ``` java nodedecorators.StringsNodeDecorator <umls-location>/MRCONSO.RRF <umls-location>/LRSPL <output-resource-file> ```
 
@@ -194,83 +287,8 @@ Again, if you can think of another type of edge filter that would be useful, ple
 
 Occasionally two ontologies will contradict each other (one will have CUI A as the parent of CUI B and the other will have B as the parent of A). To ensure the final graph is a DAG, the code will automatically collapse these cycles and create a new "meta-node" that includes both A and B. All of the CUIs in the cycle (or cycles) that get merged will end up in the same node. These are called "sibling CUIs". If you want to avoid this, you'll need to figure out which ontology or ontologies is causing the cycle and remove those edges. 
 
-## Creating the Graph
-
-Graph construction proceeds in two stages. In the first stage, the code constructs a preliminary graph that includes all of the subgraphs and decorations you've decided on and built resource files for in the previous steps. Then the code applies all of the node filters, node modifiers, and edge filters to produce a final graph. 
-
-You construct the graph by creating a configuration file (mine is called `graph-config.txt`) that looks something like this:
-
-``` 
- # subgraphs
- subgraph	ATC	/Users/beth/Desktop/subgraphs/umls-subgraph-atc.txt
- subgraph	RXNORM	/Users/beth/Desktop/subgraphs/umls-subgraph-drug-ingredient.txt
- subgraph	FMA	/Users/beth/Desktop/subgraphs/umls-subgraph-fma.txt
- subgraph	GO	/Users/beth/Desktop/subgraphs/umls-subgraph-go.txt
- subgraph	HPO	/Users/beth/Desktop/subgraphs/umls-subgraph-hpo.txt
- subgraph	ICD10PCS	/Users/beth/Desktop/subgraphs/umls-subgraph-icd10pcs.txt
- subgraph	ICD9CM	/Users/beth/Desktop/subgraphs/umls-subgraph-icd9cm.txt
- subgraph	LNC	/Users/beth/Desktop/subgraphs/umls-subgraph-lnc.txt
- subgraph	MSH	/Users/beth/Desktop/subgraphs/umls-subgraph-msh.txt
- subgraph	MTHHH	/Users/beth/Desktop/subgraphs/umls-subgraph-mthhh.txt
- subgraph	NCBI	/Users/beth/Desktop/subgraphs/umls-subgraph-ncbi.txt
- subgraph	NCI	/Users/beth/Desktop/subgraphs/umls-subgraph-nci.txt
- subgraph	NDFRT	/Users/beth/Desktop/subgraphs/umls-subgraph-ndfrt.txt
- subgraph	OMIM	/Users/beth/Desktop/subgraphs/umls-subgraph-omim.txt
- subgraph	SNOMEDCT_US	/Users/beth/Desktop/subgraphs/umls-subgraph-snomed-ct-us.txt
- 
- # code decorators
- codedecorator	ICD9CM	/Users/beth/Desktop/subgraphs/umls-decorator-icd9cm.txt
- codedecorator	MTHICD9	/Users/beth/Desktop/subgraphs/umls-decorator-mthicd9.txt
- codedecorator	ICD10PCS	/Users/beth/Desktop/subgraphs/umls-decorator-icd10pcs.txt
- codedecorator	LNC	/Users/beth/Desktop/subgraphs/umls-decorator-lnc.txt
- codedecorator	SNOMEDCT_US	/Users/beth/Desktop/subgraphs/umls-decorator-snomedct-us.txt
- codedecorator	NDC	/Users/beth/Desktop/subgraphs/umls-decorator-ndc.txt
- 
- # code translation decorators
- translation	ICD9CM	ICD10PCS	/Users/beth/Desktop/subgraphs/umls-decorator-icd9-icd10.txt
- translation	ICD9CM	SNOMEDCT_US	/Users/beth/Desktop/subgraphs/umls-decorator-icd9-snomed.txt
- 
- # other decorators
- decorator	ONTOLOGY	/Users/beth/Desktop/subgraphs/umls-decorator-ontology.txt
- decorator	SEMGROUP	/Users/beth/Desktop/subgraphs/umls-decorator-semantic-group.txt
- decorator	SEMTYPE	/Users/beth/Desktop/subgraphs/umls-decorator-semantic-type.txt
- 
- # edge filters
- edgefilter	SEMGROUPMISMATCH
- 
- # node filters
- nodefilter	SEMGROUP	ACTI|ANAT|CHEM|CONC|DEVI|DISO|GENE|GEOG|LIVB|OBJC|OCCU|ORGA|PHEN|PHYS|PROC
- nodefilter	SEMTYPE	T121
- 
- # node modifiers
- nodemodifier	MODIFIEDSTRINGS
-```
-
-You can leave out any subgraphs or decorators you want, or add additional subgraphs for other ontologies.
-
-Then you build the graph by running `java build.CreateUMLSGraph <graph-config-file> <output-structure-file> <output-decorations-file>`. 
-
-## Format of the Graph Files
-
-Both of the graph output files are tab-delimited.
-
-The structure file has two columns:
-
-* parent CUI
-* child CUI
-
-The decorations file has the following columns:
-
-* CUI
-* sibling CUIs (if any; comma-delimited)
-* string descriptions (pipe-delimited)
-* codes (pipe-delimited, with sources)
-* semantic type(s) (pipe-delimited)
-* semantic group(s) (pipe-delimited)
-* ontologies (pipe-delimited)
-
 ## Some Final Notes
 
-This is just some utility code that I've found to be useful over the years - it is not production-grade and there are bound to be errors. Please let me know if you find any. My plan is to continually refine the project in the coming months. If you're part of the biomedical research community and have any advice or want to contribute, I'd love to hear from you. I can be reached at bethany.percha@mssm.edu.
+This is just some utility code that I've found useful - it is not production-grade and there are bound to be errors. Please let me know if you find any. My plan is to refine it in the coming months. If you're part of the biomedical research community and have any advice or want to contribute, I'd love to hear from you. I can be reached at bethany.percha@mssm.edu.
 
 Please note that this code is released under the [GPL](https://www.gnu.org/licenses/gpl-3.0.en.html). 

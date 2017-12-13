@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 class CreateGraph {
     public static void main(String[] args) throws IOException {
@@ -119,14 +120,16 @@ class CreateGraph {
 
             /* subgraphs */
             if (componentType.equals("subgraph")) {
-                OntologyType ontologyType = OntologyType.fromString(configInfo[1]);
-                if (ontologyType == null) {
+                OntologyType ontologyType;
+                try {
+                    ontologyType = OntologyType.valueOf(configInfo[1]);
+                } catch (IllegalArgumentException e) {
                     System.err.println("Unrecognized subgraph type: " + configInfo[1]);
                     continue;
                 }
                 String subgraphFilePath = configInfo[2];
                 Subgraph subgraph;
-                if (ontologyType.equals(OntologyType.RxNorm)) {
+                if (ontologyType.equals(OntologyType.RXNORM)) {
                     subgraph = new DrugIngredientSubgraph(new FileInputStream(subgraphFilePath));
                 } else {
                     subgraph = new MrHierSubgraph(new FileInputStream(subgraphFilePath));
@@ -138,7 +141,7 @@ class CreateGraph {
 
             /* code decorators */
             if (componentType.equals("codedecorator")) {
-                OntologyType ontologyType = OntologyType.fromString(configInfo[1]);
+                OntologyType ontologyType = OntologyType.valueOf(configInfo[1]);
                 String decoratorResourceFile = configInfo[2];
                 NodeDecorator decorator;
                 if (ontologyType.equals(OntologyType.NDC)) {
@@ -153,8 +156,8 @@ class CreateGraph {
 
             /* code translators */
             if (componentType.equals("translation")) {
-                OntologyType ontologyType1 = OntologyType.fromString(configInfo[1]);
-                OntologyType ontologyType2 = OntologyType.fromString(configInfo[2]);
+                OntologyType ontologyType1 = OntologyType.valueOf(configInfo[1]);
+                OntologyType ontologyType2 = OntologyType.valueOf(configInfo[2]);
                 String resourceFile = configInfo[3];
                 NodeDecorator decorator;
                 if ((ontologyType1.equals(OntologyType.ICD9CM) && ontologyType2.equals(OntologyType.ICD10PCS)) ||
@@ -191,7 +194,7 @@ class CreateGraph {
                         System.out.println("Added SEMANTIC TYPE node decorations from " + resourceFile);
                         break;
                     case "STRINGS":
-                        nodeDecorators.add(new StringsNodeDecorator(new FileInputStream(resourceFile)));
+                        nodeDecorators.add(new StringsNodeDecorator(new GZIPInputStream(new FileInputStream(resourceFile))));
                         System.out.println("Added STRING node decorations from " + resourceFile);
                         break;
                     default:
