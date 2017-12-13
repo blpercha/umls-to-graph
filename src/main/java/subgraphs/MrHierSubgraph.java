@@ -33,7 +33,6 @@ public class MrHierSubgraph implements Subgraph {
                            OntologyType acceptableOntology) throws IOException {
         readMrConso(mrConsoInputStream);
         readMrHier(mrHierInputStream, acceptableOntology);
-        System.out.println("Total number of CUIs in hierarchies: " + allCuis().size());
     }
 
     private void readMrConso(final InputStream inputStream) throws IOException {
@@ -42,8 +41,9 @@ public class MrHierSubgraph implements Subgraph {
         String line;
         while ((line = reader.readLine()) != null) {
             String[] record = recordSplitPattern.split(line, -1);
-            final OntologyType ontologyType = OntologyType.fromString(record[11]);
-            if (ontologyType.equals(OntologyType.OTHER)) { // unrecognized ontology
+            try {
+                OntologyType.valueOf(record[11]);
+            } catch (IllegalArgumentException e) { // unrecognized ontology
                 continue;
             }
             final char suppressFlag = record[16].charAt(0);
@@ -74,8 +74,13 @@ public class MrHierSubgraph implements Subgraph {
     }
 
     private void processMrHierRecord(String[] record, OntologyType acceptableOntology) {
-        final OntologyType ontologyType = OntologyType.fromString(record[4]);
-        if (acceptableOntology != null && !acceptableOntology.equals(ontologyType)) {
+        OntologyType ontologyType;
+        try {
+            ontologyType = OntologyType.valueOf(record[4]);
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        if (!acceptableOntology.equals(ontologyType)) {
             return; /* relationship must be asserted by our specific ontology */
         }
 
@@ -175,7 +180,7 @@ public class MrHierSubgraph implements Subgraph {
         String ontologyType = args[3];          // we create one ontology subgraph file at a time
 
         MrHierSubgraph subgraph = new MrHierSubgraph(new FileInputStream(mrHierFile),
-                new FileInputStream(mrConsoFile), OntologyType.fromString(ontologyType));
+                new FileInputStream(mrConsoFile), OntologyType.valueOf(ontologyType));
 
         subgraph.writeResourceFile(new FileOutputStream(outputFile));
     }

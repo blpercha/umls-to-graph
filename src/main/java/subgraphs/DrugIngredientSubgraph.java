@@ -36,8 +36,8 @@ public class DrugIngredientSubgraph implements Subgraph {
         readResourceFile(resourceFileInputStream);
     }
 
-    private DrugIngredientSubgraph(InputStream mrRelInputStream, InputStream dictionaryFormatInputStream) throws IOException {
-        readMrConso(dictionaryFormatInputStream); // sets up list of allowed CUIs - must be done first
+    private DrugIngredientSubgraph(InputStream mrRelInputStream, InputStream mrConsoInputStream) throws IOException {
+        readMrConso(mrConsoInputStream); // sets up list of allowed CUIs - must be done first
         readMrRel(mrRelInputStream);
     }
 
@@ -47,8 +47,13 @@ public class DrugIngredientSubgraph implements Subgraph {
         String line;
         while ((line = reader.readLine()) != null) {
             String[] record = recordSplitPattern.split(line, -1);
-            final OntologyType ontologyType = OntologyType.fromString(record[11]);
-            if (!ontologyType.equals(OntologyType.RxNorm)) { // we only take RxNorm CUIs here
+            OntologyType ontologyType;
+            try {
+                ontologyType = OntologyType.valueOf(record[11]);
+            } catch (IllegalArgumentException e) { // unrecognized ontology
+                continue;
+            }
+            if (!ontologyType.equals(OntologyType.RXNORM)) {
                 continue;
             }
             final String tty = record[12];
@@ -73,7 +78,13 @@ public class DrugIngredientSubgraph implements Subgraph {
     }
 
     private void processMrRelRecord(String[] record) {
-        if (!OntologyType.fromString(record[10]).equals(OntologyType.RxNorm)) {
+        OntologyType ontologyType;
+        try {
+            ontologyType = OntologyType.valueOf(record[10]);
+        } catch (IllegalArgumentException e) { // unrecognized ontology
+            return;
+        }
+        if (!ontologyType.equals(OntologyType.RXNORM)) {
             return;
         }
 
@@ -94,13 +105,6 @@ public class DrugIngredientSubgraph implements Subgraph {
             ingredientToRxNormCuis.putIfAbsent(ingredientCui, new TIntHashSet());
             ingredientToRxNormCuis.get(ingredientCui).add(specificCui);
         }
-    }
-
-    public boolean anyIngredients(TIntSet cuis) {
-        TIntSet ingredientCuis = new TIntHashSet(cuis);
-        ingredientCuis.retainAll(ingredientToRxNormCuis.keySet()); // must be an ingredient
-        ingredientCuis.removeAll(rxNormCuiToIngredients.keySet()); // cannot also be a child of another thing
-        return !ingredientCuis.isEmpty();
     }
 
     private void readResourceFile(InputStream resourceFileInputStream) throws IOException {

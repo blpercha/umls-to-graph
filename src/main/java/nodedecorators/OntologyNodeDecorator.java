@@ -41,8 +41,10 @@ public class OntologyNodeDecorator implements NodeDecorator {
         String line;
         while ((line = reader.readLine()) != null) {
             String[] record = recordSplitPattern.split(line, -1);
-            final OntologyType ontologyType = OntologyType.fromString(record[11]);
-            if (ontologyType.equals(OntologyType.OTHER)) { // unrecognized ontology
+            OntologyType ontologyType;
+            try {
+                ontologyType = OntologyType.valueOf(record[11]);
+            } catch (IllegalArgumentException e) { // unrecognized ontology
                 continue;
             }
             final int cui = Integer.parseInt(record[0].substring(1));

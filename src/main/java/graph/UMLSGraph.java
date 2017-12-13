@@ -527,7 +527,7 @@ public class UMLSGraph {
             }
         }
         for (String ontologyTypeString : infoSplitPattern.split(record[6])) {
-            OntologyType ontologyType = OntologyType.fromString(ontologyTypeString);
+            OntologyType ontologyType = OntologyType.valueOf(ontologyTypeString);
             node.addOntology(ontologyType);
         }
 

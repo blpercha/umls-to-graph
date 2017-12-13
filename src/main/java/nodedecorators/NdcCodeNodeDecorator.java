@@ -35,8 +35,13 @@ public class NdcCodeNodeDecorator extends CodeNodeDecorator {
     }
 
     private void processMrSatRecord(String[] data) {
-        /* C0361891|L2500520|S3136582|A10498004|AUI|108959|AT73062910||NDC|RXNORM|00430302095|N|| */
-        OntologyType firstOntology = OntologyType.fromString(data[8]);
+        OntologyType firstOntology;
+
+        try {
+            firstOntology = OntologyType.valueOf(data[8]);
+        } catch (IllegalArgumentException e) {
+            return;
+        }
 
         if (!(firstOntology.equals(OntologyType.NDC))) {
             /* note that this assumes ndc will be first and not second... this appears to be consistent in file */

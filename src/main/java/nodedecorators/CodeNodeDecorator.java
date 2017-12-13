@@ -88,7 +88,7 @@ public abstract class CodeNodeDecorator implements NodeDecorator {
         while ((line = reader.readLine()) != null) {
             String[] record = recordSplitPattern.split(line);
             String[] codeString = commaSplitPattern.split(record[0]);
-            OntologyType ontologyType = OntologyType.fromString(codeString[0]);
+            OntologyType ontologyType = OntologyType.valueOf(codeString[0]);
             String codeValue = codeString[1];
             Pair<OntologyType, String> code = Pair.of(ontologyType, codeValue);
             codeToCuis.put(code, new TIntHashSet());

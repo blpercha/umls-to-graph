@@ -1,5 +1,6 @@
 package nodedecorators;
 
+import com.google.common.base.CharMatcher;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -7,7 +8,6 @@ import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import graph.Node;
 import org.apache.commons.lang3.StringUtils;
-import utils.OntologyType;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -70,7 +70,6 @@ public class StringsNodeDecorator implements NodeDecorator {
         reader.close();
     }
 
-    // C0000005|ENG|P|L0000005|PF|S0007492|Y|A7755565||M0019694|D012711|MSH|PEN|D012711|(131)I-Macroaggregated Albumin|0|N||
     private void readMrConso(InputStream inputStream) throws IOException {
         Pattern recordSplitPattern = Pattern.compile("\\|");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -83,22 +82,21 @@ public class StringsNodeDecorator implements NodeDecorator {
     }
 
     private void processMrConsoRecord(String[] data) {
-        /* C3527549|ENG|P|L10916028|PF|S13590637|Y|A21053675||88375||CPT|ETCLIN|88375|Optical endomicroscopic image interpretation and report|3|N|| */
-        OntologyType ontologyType = OntologyType.fromString(data[11]);
-
-        if (ontologyType.equals(OntologyType.OTHER)) { // only take codes from recognized ontologies
-            return;
-        }
-
         int cui = Integer.parseInt(data[0].substring(1));
         String descriptionString = data[14];
-
+        if (!data[1].equals("ENG")) {
+            return;
+        }
         cuiToDescriptionMap.putIfAbsent(cui, new HashSet<>());
         cuiToDescriptionMap.get(cui).add(descriptionString);
         if (!descriptionToCuisMap.containsKey(descriptionString)) {
-            descriptionToCuisMap.put(descriptionString, new TIntHashSet());
+            if (CharMatcher.ASCII.matchesAllOf(descriptionString)) {
+                descriptionToCuisMap.put(descriptionString, new TIntHashSet());
+                descriptionToCuisMap.get(descriptionString).add(cui);
+            } else {
+                System.err.println("Non-ASCII description; skipping: " + descriptionString);
+            }
         }
-        descriptionToCuisMap.get(descriptionString).add(cui);
     }
 
     private Set<String> getDescriptions(int cui) {
@@ -136,7 +134,7 @@ public class StringsNodeDecorator implements NodeDecorator {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         while ((line = reader.readLine()) != null) {
-            final String[] record = recordSplitPattern.split(line);
+            final String[] record = recordSplitPattern.split(line.trim());
             final int cui = Integer.parseInt(record[0]);
             final String[] descriptions = descriptionsSplitPattern.split(record[1]);
             cuiToDescriptionMap.putIfAbsent(cui, new HashSet<>());

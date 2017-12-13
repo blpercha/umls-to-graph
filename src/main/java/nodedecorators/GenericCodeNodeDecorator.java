@@ -35,8 +35,12 @@ public class GenericCodeNodeDecorator extends CodeNodeDecorator {
     }
 
     private void processMrConsoRecord(String[] data, OntologyType desiredOntology) {
-        OntologyType ontologyType = OntologyType.fromString(data[11]);
-
+        OntologyType ontologyType;
+        try {
+            ontologyType = OntologyType.valueOf(data[11]);
+        } catch (IllegalArgumentException e) { // unrecognized ontology
+            return;
+        }
         if (!(ontologyType.equals(desiredOntology))) { // only take codes from desired ontology
             return;
         }
@@ -58,11 +62,7 @@ public class GenericCodeNodeDecorator extends CodeNodeDecorator {
         String ontologyTypeString = args[1];
         String outputResourceFile = args[2];
 
-        OntologyType ontologyType = OntologyType.fromString(ontologyTypeString);
-        if (ontologyType.equals(OntologyType.OTHER)) {
-            System.err.println("Unrecognized ontology type: " + ontologyTypeString);
-            return;
-        }
+        OntologyType ontologyType = OntologyType.valueOf(ontologyTypeString);
         GenericCodeNodeDecorator map = new GenericCodeNodeDecorator(new FileInputStream(mrConsoFile), ontologyType);
         map.writeResourceFile(new FileOutputStream(outputResourceFile));
     }
