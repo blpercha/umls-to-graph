@@ -22,7 +22,14 @@ A couple of notes:
 
 ## Creating the Graph
 
-The `umls-to-graph` code uses Maven to handle dependencies (see the `pom.xml` file for details). Run the code from Eclipse or IntelliJ, or compile a jar using Maven.
+The `umls-to-graph` code uses Gradle to handle dependencies (see the `build.gradle.kts` file for details). Run the code from Eclipse or IntelliJ, or compile a jar:
+
+```
+./gradlew assemble
+```
+
+This will produce a jar in `build/libs/umls-to-graph-all.jar` that you can use with `java -jar <jar file> <more args>`.
+
 
 You construct the graph by creating a configuration file (mine is called `graph-config.txt` and can be found in the `resources` section of this repository) that looks something like this:
 

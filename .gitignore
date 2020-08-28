@@ -22,7 +22,6 @@
 hs_err_pid*
 
 .idea
-target/generated-sources/
-target/generated-test-sources/
-target/maven-status/
-umls-to-graph.iml
+*.iml
+/build
+/.gradle
